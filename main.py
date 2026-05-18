@@ -60,7 +60,7 @@ class Player:
     def __init__(self, name):
         self.hand = Hand()
         self.chip_count = 1000
-        self.name = ""
+        self.name = name
 
 
 
@@ -68,7 +68,62 @@ class Player:
 if __name__ == '__main__':
     deck = Deck()
     deck.shuffle_deck()
-    for card in deck.deck:
+
+    player = Player("Player 1")
+    dealer = Player("Dealer")
+
+    while len(dealer.hand.cards) < 2:
+        player.hand.add_card(deck)
+        dealer.hand.add_card(deck)
+
+    print("Player's hand:")
+
+    for card in player.hand.cards:
         print(card)
+    print(f"Score: {player.hand.calculate_score()}\n")
+
+    print("Dealer's hand:")
+    print("???")
+    print(dealer.hand.cards[1])
+
+    if dealer.hand.calculate_score() == 21:
+        for card in dealer.hand.cards:
+            print(card)
+        print("Dealer has won the game!")
 
 
+    player_choice = input("(H)it, (S)tand").lower()
+    player_bust = False
+
+    while player_choice != "s" and player.hand.calculate_score() < 21:
+        if player_choice == "h":
+            player.hand.add_card(deck)
+
+        for card in player.hand.cards:
+            print(card)
+        print(f"Score: {player.hand.calculate_score()}\n")
+
+        if player.hand.calculate_score() > 21:
+            print("Player bust")
+            player_bust = True
+            continue
+
+        player_choice = input("(H)it, (S)tand").lower()
+
+    if not player_bust:
+        while dealer.hand.calculate_score() < 17:
+            dealer.hand.add_card(deck)
+            for card in dealer.hand.cards:
+                print(card)
+
+            print(f"Score: {dealer.hand.calculate_score()}\n")
+
+        if dealer.hand.calculate_score() > 21:
+            print("Dealer bust")
+        else:
+            if player.hand.calculate_score() > dealer.hand.calculate_score():
+                print("Player wins!")
+            elif dealer.hand.calculate_score() > player.hand.calculate_score():
+                print("Dealer wins!")
+            else:
+                print("Push")
